@@ -17,7 +17,7 @@ class TransactionController extends Controller
      * 
      * Desc : Recalculates the weighted avg cost
      */
-    private function recalculateTransactions($productId)
+    public function recalculateTransactions($productId)
     {
         $product = Product::findOrFail($productId);
         $transactions = Transaction::where('product_id', $productId)
