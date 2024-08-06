@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Enums\HttpStatus;
 
 class UserController extends Controller {
 
@@ -27,7 +28,7 @@ class UserController extends Controller {
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), HttpStatus::BAD_REQUEST->value);
         }
 
         // Create the user
@@ -43,7 +44,7 @@ class UserController extends Controller {
             'message' => 'Registration Successful!',
             'user' => $user,
             'token' => $token
-        ], 201);
+        ], HttpStatus::CREATED->value);
     }
 
     /**
@@ -58,7 +59,7 @@ class UserController extends Controller {
         $credentials = $request->only('email', 'password');
 
         if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            return response()->json(['error' => 'Invalid credentials'], HttpStatus::UNAUTHORIZED->value);
         }
 
         return response()->json([

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Enums\HttpStatus;
 
 class TransactionController extends Controller
 {
@@ -62,7 +63,7 @@ class TransactionController extends Controller
         // Return error if not enough stock
         $product = Product::find($request->product_id);
         if ($product->quantity < $request->quantity) {
-            return response()->json(['error' => 'Not Enough Stock!'], 400);
+            return response()->json(['error' => 'Not Enough Stock!'], HttpStatus::BAD_REQUEST->value);
         }
 
         // Create the sale
@@ -81,7 +82,7 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Recorded Sale Successfully!',
             'transaction' => $transaction
-        ], 201);
+        ], HttpStatus::CREATED->value);
     }
 
     /**
@@ -117,7 +118,7 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Recorded Purchase Successfully!',
             'transaction' => $transaction
-        ], 201);
+        ], HttpStatus::CREATED->value);
     }
 
     /**

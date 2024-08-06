@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Enums;
+
+enum HttpStatus
+{
+    case OK = 200; // Remove (?) Since default is 200
+    case CREATED = 201;
+    case BAD_REQUEST = 400;
+    case UNAUTHORIZED = 401;
+    case NOT_FOUND = 404;
+}
