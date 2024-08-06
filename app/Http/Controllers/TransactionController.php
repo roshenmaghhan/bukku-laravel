@@ -18,7 +18,7 @@ class TransactionController extends Controller
      */
     private function recalculateTransactions($productId)
     {
-        $product = Product::find($productId);
+        $product = Product::findOrFail($productId);
         $transactions = Transaction::where('product_id', $productId)
                                     ->orderBy('date', 'asc')
                                     ->get();
@@ -55,13 +55,13 @@ class TransactionController extends Controller
     {
         // Validate the request
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required',
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
 
         // Return error if not enough stock
-        $product = Product::find($request->product_id);
+        $product = Product::findOrFail($request->product_id);
         if ($product->quantity < $request->quantity) {
             return response()->json(['error' => 'Not Enough Stock!'], HttpStatus::BAD_REQUEST->value);
         }
@@ -96,15 +96,16 @@ class TransactionController extends Controller
     {
         // Validate the request
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required',
             'quantity' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
             'date' => 'required|date',
         ]);
 
         // Record the purchase
+        $product = Product::findOrFail($request->product_id);
         $transaction = Transaction::create([
-            'product_id' => $request->product_id,
+            'product_id' => $product->id,
             'type' => 'purchase',
             'quantity' => $request->quantity,
             'price' => $request->price,
