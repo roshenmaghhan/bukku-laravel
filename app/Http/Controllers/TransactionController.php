@@ -122,35 +122,19 @@ class TransactionController extends Controller
     }
 
     /**
-     * Summary of getPurchases
-     * @return mixed|\Illuminate\Http\JsonResponse
-     * 
-     * Desc : Gets list of purchases by ascending date
-     */
-    public function getPurchases()
-    {
-        $purchases = Transaction::where('type', 'purchase')
-                                ->with('product')
-                                ->orderBy('date', 'asc')
-                                ->get();
-
-        return response()->json($purchases);
-    }
-
-    /**
      * Summary of getSales
      * @return mixed|\Illuminate\Http\JsonResponse
      * 
-     * Desc : Gets list of sales by ascending date
+     * Desc : Gets list of sales or purchases by ascending date
      */
-    public function getSales()
+    public function getSalesOrPurchases($type)
     {
-        $sales = Transaction::where('type', 'sale')
+        $val = Transaction::where('type', $type)
                             ->with('product')
                             ->orderBy('date', 'asc')
                             ->get();
 
-        return response()->json($sales);
+        return response()->json($val);
     }
 
     /**

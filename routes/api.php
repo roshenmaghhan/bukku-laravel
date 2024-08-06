@@ -9,8 +9,12 @@ Route::post('login', [UserController::class, 'login']);
 Route::middleware('auth:api')->group(function () { // All endpoints aside from register and login, should require auth
     Route::post('purchase', [TransactionController::class, 'recordPurchase']);
     Route::post('sale', [TransactionController::class, 'recordSale']);
-    Route::get('purchases', [TransactionController::class, 'getPurchases']);
-    Route::get('sales', [TransactionController::class, 'getSales']);
+    Route::get('purchases', function() {
+        return app(TransactionController::class)->getSalesOrPurchases('purchase');
+    });
+    Route::get('sales', function() {
+        return app(TransactionController::class)->getSalesOrPurchases('sale');
+    });
     Route::put('transactions/{id}', [TransactionController::class, 'updateTransaction']);
     Route::delete('transactions/{id}', [TransactionController::class, 'deleteTransaction']);
 });

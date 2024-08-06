@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum HttpStatus
+enum HttpStatus: int
 {
     case OK = 200; // Remove (?) Since default is 200
     case CREATED = 201;
