@@ -14,13 +14,21 @@ class EnsureTokenIsValid
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
+
+    public $whitelist = [
+        'login',
+        'register'
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {   
-        $token = $request->bearerToken();
-        if ($token === null) {
-            return response()->json([
-                'message' => 'Unauthorized.'
-            ], HttpStatus::UNAUTHORIZED->value);
+        if (!in_array(str_replace("api/", "", $request->path()), $this->whitelist)) {
+            $token = $request->bearerToken();
+            if ($token === null) {
+                return response()->json([
+                    'message' => 'Unauthorized.'
+                ], HttpStatus::UNAUTHORIZED->value);
+            }
         }
 
         return $next($request);
