@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Enums\HttpStatus;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -54,14 +55,18 @@ class TransactionController extends Controller
     public function recordSale(Request $request)
     {
         // Validate the request
-        $request->validate([
-            'product_id' => 'required',
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), HttpStatus::BAD_REQUEST->value);
+        }
+
         // Return error if not enough stock
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::find($request->product_id);
         if ($product->quantity < $request->quantity) {
             return response()->json(['error' => 'Not Enough Stock!'], HttpStatus::BAD_REQUEST->value);
         }
@@ -95,17 +100,20 @@ class TransactionController extends Controller
     public function recordPurchase(Request $request)
     {
         // Validate the request
-        $request->validate([
-            'product_id' => 'required',
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
             'date' => 'required|date',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), HttpStatus::BAD_REQUEST->value);
+        }
+
         // Record the purchase
-        $product = Product::findOrFail($request->product_id);
         $transaction = Transaction::create([
-            'product_id' => $product->id,
+            'product_id' => $request->product_id,
             'type' => 'purchase',
             'quantity' => $request->quantity,
             'price' => $request->price,
@@ -149,11 +157,15 @@ class TransactionController extends Controller
     public function updateTransaction(Request $request, $id)
     {
         // Validate the request
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'quantity' => 'integer|min:1',
             'price' => 'numeric|min:0',
             'date' => 'date',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), HttpStatus::BAD_REQUEST->value);
+        }
 
         // Find the transaction, or not throw 404
         $transaction = Transaction::findOrFail($id);
