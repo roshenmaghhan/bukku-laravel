@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Middleware\EnsureTokenIsValid;
+use Illuminate\Http\Request; 
 
 
 Route::post('register', [UserController::class, 'register']);

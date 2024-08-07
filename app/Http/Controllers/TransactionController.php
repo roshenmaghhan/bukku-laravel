@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Enums\HttpStatus;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
@@ -187,7 +188,7 @@ class TransactionController extends Controller
         $this->recalculateTransactions($transaction->product_id);
 
         return response()->json([
-            'message' => 'Updated Transaction successfully!',
+            'message' => 'Updated Transaction Successfully!',
             'transaction' => $transaction
         ]);
     }
