@@ -142,7 +142,17 @@ class TransactionController extends Controller
                             ->with('product')
                             ->orderBy('date', 'asc')
                             ->get();
+        
+        $val->each(function ($transaction) {
+            $hiddenFields = ['product_id'];
 
+            if ($transaction->type === 'purchase') {
+                $hiddenFields[] = 'cost';
+            }
+        
+            $transaction->makeHidden($hiddenFields);
+        });
+                            
         return response()->json($val);
     }
 
